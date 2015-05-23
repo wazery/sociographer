@@ -11,7 +11,7 @@ module Sociographer
       ### SETUP STARTED ####
 
       # Callback after creation of Entity (e.g. User)
-			# to create the corresponding node in Neo4j DB
+      # to create the corresponding node in Neo4j DB
       def setup_nodes
         entity_node = self.create_entity_node
         privacy_node = self.create_privacy_node
@@ -57,9 +57,7 @@ module Sociographer
         return activities_list_node
       end
 
-
       ### SETUP FINISHED ####
-
 
       ### NODES IDs FETCHING ####
 
@@ -165,12 +163,11 @@ module Sociographer
 
       ### ACTIONS TRACKING STARTED ###
 
-
       # User's distinct relations with count
       # options:
-        # weights: true
-        # complemented: true,
-        # activity_types: ["dis liked", "dis-liked", "disliked", :disliked, :dis_liked] || "disliked" || :disliked
+      # weights: true
+      # complemented: true,
+      # activity_types: ["dis liked", "dis-liked", "disliked", :disliked, :dis_liked] || "disliked" || :disliked
 
       def all_activities_types
         activities_types = $neo.list_relationship_types 
@@ -220,14 +217,13 @@ module Sociographer
 
       ### ACTIONS TRACKING FINISHED ###
 
-
       ### SOCIAL MODELING STARTED ###
 
       # options:
-        # weighted: true >> Then the input is in the form of [{entity: entity_node, weight: weight%}, ...]
-        # weight: true >> Then the output is in the form of [{entity: entity_node, weight: weight%}, ...]
-        # sort: true >> This means that the output should be sorted > The output will be in the form of [{entity: entity_object, weight: weight%}, ...]
-        # if none from the above is passed as input: then the input is in the form of [entity_node, ...] >> and the result will be in the form of [entity_object, ...]
+      # weighted: true >> Then the input is in the form of [{entity: entity_node, weight: weight%}, ...]
+      # weight: true >> Then the output is in the form of [{entity: entity_node, weight: weight%}, ...]
+      # sort: true >> This means that the output should be sorted > The output will be in the form of [{entity: entity_object, weight: weight%}, ...]
+      # if none from the above is passed as input: then the input is in the form of [entity_node, ...] >> and the result will be in the form of [entity_object, ...]
 
       def fetch_entities(entities_nodes_list, options={})
         if options[:only_ids]
@@ -279,10 +275,10 @@ module Sociographer
       end
 
       # options:
-        # self_node: entity_node
-        # self_relations_weights: [activity_type: weight, ...]
-        # self_activities_list: [{timestamp: time, actionable_node: node, activity_type: activity_type}, ...]
-        # sort: true
+      # self_node: entity_node
+      # self_relations_weights: [activity_type: weight, ...]
+      # self_activities_list: [{timestamp: time, actionable_node: node, activity_type: activity_type}, ...]
+      # sort: true
       def weight_entities(entities_list, options={})
         ratings = []
 
@@ -398,7 +394,6 @@ module Sociographer
 
       ### SOCIAL MODELING FINISHED ###
 
-
       ### SOCIAL RECOMMENDATION STARTED ###
 
       # Get all paths of entities between you and the entity (like linkedin)
@@ -463,7 +458,7 @@ module Sociographer
         self_node = options[:self_node] || self.entity_node
         activities_node = options[:activities_node] || self.activities_node(self_node[:activities_node_id])
         activities_list_node = options[:activities_list_node] || self.activities_list_node(self_node[:activities_list_node_id])
-        
+
         activities_list = options[:activities] || YAML.load(activities_list_node[:activities])
         if activities_list.empty?
           activities_list = []
@@ -545,7 +540,7 @@ module Sociographer
           ## Updating the current activities count
           self_activities_node[:current_activities_count] += 1
           # if (self_activities_node[:past_activities_count] >= 70) && ( (self_activities_node[:current_activities_count]/self_activities_node[:past_activities_count].to_f) >= 0.05 )
-            self.update_activities(self_node: self_node, activities_node: self_activities_node, activities_list_node: self_activities_list_node, activities: self_activities_list)
+          self.update_activities(self_node: self_node, activities_node: self_activities_node, activities_list_node: self_activities_list_node, activities: self_activities_list)
           # end
         end
       end
@@ -571,16 +566,16 @@ module Sociographer
       end
 
       ### SOCIAL TRUST STARTED ###
-      
+
       # To calculate a number representing the relation between you and the entity:
-        # according to the weight of the relations, their magnitude, and their frequencies
-        # according to each user
+      # according to the weight of the relations, their magnitude, and their frequencies
+      # according to each user
       def calculate_relation(entity, options={})
         if entity.is_a?(Sociographer::Entity) && (self!=entity)
           ## USER DATA
           self_node = options[:self_node] || self.entity_node
           self_node_id = self_node.neo_id.to_i
-          
+
           self_activities_node = options[:activities_node] || self.activities_node(self_node[:activities_node_id])
           self_activities_weights = options[:self_weights] || self.activities_counts(weights: true, activities_node: self_activities_node)
           self_activities_sets = options[:activities_sets] || YAML.load(self_activities_node[:activities_sets])
@@ -590,7 +585,7 @@ module Sociographer
           ## ENTITY DATA
           entity_node = entity.entity_node
           entity_node_id = entity_node.neo_id.to_i
-          
+
           entity_activities_node = entity.activities_node(entity_node[:activities_node_id])
           entity_activities_weights = entity.activities_counts(weights: true, activities_node: entity_activities_node)
           entity_activities_sets = YAML.load(entity_activities_node[:activities_sets])
@@ -613,7 +608,7 @@ module Sociographer
 
             self_activities_list_node = options[:activities_list_node] || self.activities_list_node(self_node[:activities_list_node_id])
             self_activities_list = options[:activities_list] || YAML.load(self_activities_list_node[:activities])
-  
+
             entity_activities_list_node = entity.activities_list_node(entity[:activities_list_node_id])
             entity_activities_list = YAML.load(entity_activities_list_node[:activities])
 
@@ -632,7 +627,7 @@ module Sociographer
             self_common_activities.each do |actionable_node|
               self_node_acts = actionable_node[1]
               entity_node_acts = entity_common_activities[actionable_node[0]]
-              
+
               self_actionable_node_acts_sum = 0
               self_node_acts.each do |act|
                 activity_type = act[:activity_type]
@@ -655,7 +650,7 @@ module Sociographer
             end
             self_entities_weights[entity_node_id] = {start_last_updated_count: self_activities_node[:past_activities_count], end_last_updated_count: entity_activities_node[:past_activities_count], weight: weight_in_between}
             entity_entities_weights[self_node_id] = {start_last_updated_count: entity_activities_node[:past_activities_count], end_last_updated_count: self_activities_node[:past_activities_count], weight: weight_in_between}
-            
+
             self_activities_node[:entities_weights] = YAML.dump(self_entities_weights)
             entity_activities_node[:entities_weights] = YAML.dump(entity_entities_weights)
           end
@@ -770,7 +765,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           all_lists = get_all_lists_nodes(self_node: self_node, privacy_node: privacy_node)
           selected_lists = all_lists.select{ |list| list[1].include?(entity_node_id) }.map{|list| list[0]}
           return selected_lists
@@ -783,7 +778,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           banned_list = YAML.load(privacy_node[:banned_list])
           banned_list << entity_node_id
           banned_list = banned_list.compact.uniq
@@ -802,7 +797,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           banned_list = YAML.load(privacy_node[:banned_list])
           banned_list.delete(entity_node_id)
           privacy_node[:banned_list] = YAML.dump(banned_list)
@@ -812,7 +807,7 @@ module Sociographer
       def get_banned(options={})
         self_node = options[:self_node] || self.entity_node
         privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
-        
+
         banned_list = YAML.load(privacy_node[:banned_list])
         if options[:only_nodes]
           return banned_list
@@ -827,7 +822,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           favorite_list = YAML.load(privacy_node[:favorite_list])
           favorite_list << entity_node_id
           favorite_list = favorite_list.compact.uniq
@@ -846,7 +841,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           favorite_list = YAML.load(privacy_node[:favorite_list])
           favorite_list.delete(entity_node_id)
           privacy_node[:favorite_list] = YAML.dump(favorite_list)
@@ -856,7 +851,7 @@ module Sociographer
       def get_favorite(options={})
         self_node = options[:self_node] || self.entity_node
         privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
-        
+
         favorite_list = YAML.load(privacy_node[:favorite_list])
         if options[:only_nodes]
           return favorite_list
@@ -884,7 +879,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           list_name = prepare_activity_string(list_name)
 
           unless ["banned_list", "favorite_list"].include?(list_name) || privacy_node[list_name] 
@@ -905,7 +900,7 @@ module Sociographer
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
 
           entity_node_id = entity.entity_node_id
-          
+
           list_name = prepare_activity_string(list_name)
 
           if !["banned_list", "favorite_list"].include?(list_name) && privacy_node[list_name]
@@ -921,7 +916,7 @@ module Sociographer
         if list_name.is_a?(String) && !list_name.strip.empty?
           self_node = options[:self_node] || self.entity_node
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
-          
+
           list_name = prepare_activity_string(list_name)
 
           if privacy_node[list_name]
@@ -939,7 +934,7 @@ module Sociographer
         if list_name.is_a?(String) && !list_name.strip.empty?
           self_node = options[:self_node] || self.entity_node
           privacy_node = options[:privacy_node] || self.privacy_node(self_node[:privacy_node_id])
-          
+
           list_name = prepare_activity_string(list_name)
           if privacy_node[list_name]
             $neo.remove_node_properties(privacy_node, list_name)
