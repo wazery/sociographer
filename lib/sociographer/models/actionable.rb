@@ -66,7 +66,3 @@ module Sociographer
     end
   end
 end
-
-class ActiveRecord::Base
-  include Sociographer
-end
