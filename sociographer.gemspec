@@ -26,6 +26,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.9"
   spec.add_development_dependency "rake", "~> 10.0"
 
-	s.add_dependency("neography")
-	s.add_dependency("knnball")
+	spec.add_dependency("neography")
+	spec.add_dependency("knnball")
 end
