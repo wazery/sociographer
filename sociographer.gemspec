@@ -6,12 +6,13 @@ require 'sociographer/version'
 Gem::Specification.new do |spec|
   spec.name          = "sociographer"
   spec.version       = Sociographer::VERSION
-  spec.authors       = ["Islam Wazery"]
+  spec.authors       = ["Hazem ElKilisly", "Islam Wazery"]
   spec.email         = ["wazery@ubuntu.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Ruby social engine based on Neo4j.}
+  spec.description   = %q{Ruby social engine based on Neo4j.}
+  spec.homepage      = "https://github.com/wazery/sociographer"
+  spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
